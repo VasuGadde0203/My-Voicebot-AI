@@ -1,0 +1,92 @@
+Vasu Ramesh Gadde
+Data Scientist | Machine Learning Intern
+vasugadde0203@gmail.com 8793306218 Mumbai, Maharashtra https://www.linkedin.com/in/vasu-gadde/ https://github.com/VasuGadde0203
+PROFILE PROFESSIONAL EXPERIENCE
+AI/ML Engineer with practical experience in Machine Learning Intern
+building machine learning projects using Python Supermoney Advisors Private Limited
+and frameworks like Pytorch, TensorFlow and 08/2024 – present | Mumbai, India
+Scikit-learn. Hands-on exposure to real-time data Developed NLP and RAG pipelines using OpenAI
+•
+processing, REST API integration, and data APIs and Pinecone for financial Q&A chatbots.
+visualization. Familiar with Generative AI concepts Designed end-to-end data pipelines using Python
+and basic cloud services on Azure and AWS. Strong and MongoDB for secure, real-time financial data
+foundation in model development, data processing.
+preprocessing, and backend API integration using Conducted predictive modeling and forecasting
+•
+FastAPI. Eager to contribute to solving business using time-series methods to estimate price
+problems with AI-driven solutions and continuously trends. Built interactive Power BI dashboards to
+grow in the field of machine learning. visualize model insights and KPIs for stakeholder
+reporting. Focused on model evaluation,
+PROJECTS preprocessing, and improving accuracy through
+iterative experimentation.
+CryptoLab: RealTime Data using Binance API - https://github.com/VasuGadde0203/CryptoLab_backend
+FastAPI + Binance API + Pinecone + Azure OpenAI + SKILLS
+MongoDB + SMTP
+Designed real-time data pipelines using Binance Programming & Data
+•
+APIs and MongoDB for financial data. Developed Python, Pandas, NumPy, SQL, Data Preprocessing
+LSTM-based forecasting models and integrated
+RAG systems using Pinecone and Azure OpenAI. Machine Learning & GenAI
+Applied generative AI for context-aware crypto Supervised/Unsupervised Learning, Deep Learning,
+insights. NLP, RAG, GPT-3/4, LangChain, OpenAI, Hugging
+Face
+Personal Research Assistant - https://github.com/VasuGadde0203/Personal-Research-Assistant
+FastAPI + LangChain + MongoDB + FAISS Cloud Platforms
+Built a semantic search engine for research papers Azure, AWS (EC2, S3, RDS, EventBridge)
+•
+using LangChain, FAISS, and Azure OpenAI.
+Integrated vector stores and embeddings for ML Frameworks
+accurate NLP-based information retrieval. TensorFlow, Scikit-learn, PyTorch (basics)
+Showcased end-to-end ML pipeline and GenAI-
+based summarization features. Deployment & DevOps
+Docker, Git, GitHub, FastAPI, GitHub Actions
+GitaChatBot – LLM-based Conversational - https://github.com/VasuGadde0203/GitaChatBot
+Agent Data Storage
+FastAPI + Gemini + MongoDB MongoDB, NoSQL
+Created a conversational agent using Gemini,
+•
+MongoDB, and FAISS for spiritual content Q&A. API Integration & Backend
+Utilized RAG architecture and document REST APIs, FastAPI, Flask
+embeddings for context-aware responses.
+Visualization & BI
+Demonstrated fine-tuned GenAI usage in a
+Power BI, Streamlit, Matplotlib, Seaborn
+culturally relevant application.
+Web Scraping
+EDUCATION
+BeautifulSoup, Selenium
+BSc in Information Technology
+Vector Databases
+University of Mumbai
+Pinecone, ChromaDB, FAISS
+09/2021 – 05/2024 | Thane, India
+CERTIFICATES
+LANGUAGES
+Python Certification Hackerrank
+English
+Basic to Advanced Microsoft PowerBI
+Hindi
+Basic to Advanced Microsoft Excel
+Telugu
+
+
+1. What should we know about your life story in a few sentences?
+"I come from a background in IT and have always been passionate about understanding how things work behind the scenes. Over time, I developed a strong interest in data—how it can tell stories, solve problems, and drive decisions. I’ve worked on projects ranging from data visualization to API integration, and I’m continuously exploring new technologies to keep growing in this field."
+
+2. What’s your #1 superpower?
+"My superpower is adaptability. I learn quickly and thrive in situations where I need to figure things out fast—whether it's learning a new tool, debugging a tough issue, or switching roles on a team."
+
+3. What are the top 3 areas you’d like to grow in?
+
+Advanced Machine Learning & AI Concepts – to deepen my technical capabilities.
+
+Effective Communication & Storytelling with Data – to better present insights to non-technical stakeholders.
+
+Leadership & Mentoring – to contribute more strategically to team and project success.
+
+4. What misconception do your coworkers have about you?
+"Sometimes people assume I’m very quiet or reserved, but once I’m comfortable, I contribute a lot with ideas, feedback, and collaboration. I just take a little time to observe before jumping in."
+
+5. How do you push your boundaries and limits?
+"I deliberately take on tasks or projects that are slightly outside my comfort zone. I break them into manageable parts, seek guidance when needed, and treat every challenge as a learning opportunity. This approach has helped me grow faster and build confidence over time."
+
