@@ -12,8 +12,11 @@ COPY . .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port
-EXPOSE $PORT
+# Use environment variable PORT if defined, otherwise default to 8000
+ENV PORT=8000
+
+# Expose the port (use the environment variable at runtime, not here)
+EXPOSE 8000
 
 # Run the application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "$PORT"]
