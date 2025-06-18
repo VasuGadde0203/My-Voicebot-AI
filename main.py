@@ -254,6 +254,7 @@ from pydub import AudioSegment
 from pydantic import BaseModel
 import assemblyai as aai
 import pyttsx3
+from google.cloud import texttospeech
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -405,17 +406,30 @@ def speech_to_text(audio_path: str) -> str:
 def text_to_speech(text: str, audio_file_path: str) -> str:
     logger.info(f"Generating audio for text: {text[:50]}...")
     try:
-        # Initialize pyttsx3 engine
-        engine = pyttsx3.init()
-        
-        # Get available voices and select a male voice
-        voices = engine.getProperty('voices')
-        male_voice = next((voice for voice in voices if 'male' in voice.name.lower() or 'david' in voice.name.lower() or 'mark' in voice.name.lower()), voices[0])
-        engine.setProperty('voice', male_voice.id)
-        
-        # Generate and save the audio
-        engine.save_to_file(text, audio_file_path)
-        engine.runAndWait()
+        # Initialize the Google Cloud TTS client
+        client = texttospeech.TextToSpeechClient()
+
+        # Set the voice parameters (select a male voice, e.g., 'en-US-Wavenet-D')
+        voice = texttospeech.VoiceSelectionParams(
+            language_code="en-US",
+            name="en-US-Wavenet-D",  # Male voice option (Wavenet-D is a male voice)
+            ssml_gender=texttospeech.SsmlVoiceGender.MALE
+        )
+
+        # Configure the audio output
+        audio_config = texttospeech.AudioConfig(
+            audio_encoding=texttospeech.AudioEncoding.MP3
+        )
+
+        # Generate the audio
+        synthesis_input = texttospeech.SynthesisInput(text=text)
+        response = client.synthesize_speech(
+            input=synthesis_input, voice=voice, audio_config=audio_config
+        )
+
+        # Save the audio to the file
+        with open(audio_file_path, "wb") as out_file:
+            out_file.write(response.audio_content)
         logger.info(f"Audio saved to: {audio_file_path}")
         return audio_file_path
     except Exception as e:
