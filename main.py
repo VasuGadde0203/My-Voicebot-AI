@@ -341,23 +341,36 @@ def speech_to_text(audio_path: str) -> str:
         try:
             logger.info(f"Attempting transcription with AssemblyAI API key {i + 1}")
             aai.settings.api_key = api_key
-            transcriber = aai.Transcriber()
+            config = aai.TranscriptionConfig(speech_model=aai.SpeechModel.best)
+            transcriber = aai.Transcriber(config=config)
             transcript = transcriber.transcribe(audio_path)
             if transcript.status == aai.TranscriptStatus.COMPLETED:
                 logger.info(f"AssemblyAI transcription successful with key {i + 1}: {transcript.text}")
                 return transcript.text
-            else:
-                logger.warning(f"AssemblyAI transcription failed with key {i + 1}: Status {transcript.status}")
+            elif transcript.status == "error":
+                logger.warning(f"AssemblyAI transcription failed with key {i + 1}: {transcript.error}")
                 continue
-        except aai.AuthenticationError:
-            logger.error(f"Authentication failed with AssemblyAI API key {i + 1}")
-            continue
-        except aai.RequestError as e:
-            logger.error(f"AssemblyAI request error with key {i + 1}: {str(e)}")
-            continue
         except Exception as e:
-            logger.error(f"Unexpected error with AssemblyAI key {i + 1}: {str(e)}")
+            logger.error(f"Error with AssemblyAI key {i + 1}: {str(e)}")
             continue
+    
+    # Fallback to speech_recognition (Google Speech Recognition) if all API keys fail
+    logger.info("Falling back to Google Speech Recognition")
+    try:
+        with sr.AudioFile(audio_path) as source:
+            audio_data = recognizer.record(source)
+            transcript = recognizer.recognize_google(audio_data)
+            logger.info(f"Google Speech Recognition transcript: {transcript}")
+            return transcript
+    except sr.UnknownValueError:
+        logger.error("Google Speech Recognition could not understand audio")
+        raise HTTPException(status_code=400, detail="Could not understand audio")
+    except sr.RequestError as e:
+        logger.error(f"Google Speech Recognition error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Speech recognition error: {str(e)}")
+    except Exception as e:
+        logger.error(f"Unexpected error in speech_to_text fallback: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
     
     # Fallback to speech_recognition (Google Speech Recognition) if all API keys fail
     logger.info("Falling back to Google Speech Recognition")
