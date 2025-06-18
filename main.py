@@ -392,49 +392,49 @@ def speech_to_text(audio_path: str) -> str:
         logger.error(f"Unexpected error in speech_to_text fallback: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
     
-# def text_to_speech(text: str, audio_file_path: str) -> str:
-#     logger.info(f"Generating audio for text: {text[:50]}...")
-#     try:
-#         tts = gTTS(text=text, lang='en',)
-#         tts.save(audio_file_path)
-#         logger.info(f"Audio saved to: {audio_file_path}")
-#         return audio_file_path
-#     except Exception as e:
-#         logger.error(f"Text-to-speech error: {str(e)}")
-#         raise HTTPException(status_code=500, detail=f"Text-to-speech error: {str(e)}")
-
 def text_to_speech(text: str, audio_file_path: str) -> str:
     logger.info(f"Generating audio for text: {text[:50]}...")
     try:
-        # Initialize the Google Cloud TTS client
-        client = texttospeech.TextToSpeechClient()
-
-        # Set the voice parameters (select a male voice, e.g., 'en-US-Wavenet-D')
-        voice = texttospeech.VoiceSelectionParams(
-            language_code="en-US",
-            name="en-US-Wavenet-D",  # Male voice option (Wavenet-D is a male voice)
-            ssml_gender=texttospeech.SsmlVoiceGender.MALE
-        )
-
-        # Configure the audio output
-        audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.MP3
-        )
-
-        # Generate the audio
-        synthesis_input = texttospeech.SynthesisInput(text=text)
-        response = client.synthesize_speech(
-            input=synthesis_input, voice=voice, audio_config=audio_config
-        )
-
-        # Save the audio to the file
-        with open(audio_file_path, "wb") as out_file:
-            out_file.write(response.audio_content)
+        tts = gTTS(text=text, lang='en',)
+        tts.save(audio_file_path)
         logger.info(f"Audio saved to: {audio_file_path}")
         return audio_file_path
     except Exception as e:
         logger.error(f"Text-to-speech error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Text-to-speech error: {str(e)}")
+
+# def text_to_speech(text: str, audio_file_path: str) -> str:
+#     logger.info(f"Generating audio for text: {text[:50]}...")
+#     try:
+#         # Initialize the Google Cloud TTS client
+#         client = texttospeech.TextToSpeechClient()
+
+#         # Set the voice parameters (select a male voice, e.g., 'en-US-Wavenet-D')
+#         voice = texttospeech.VoiceSelectionParams(
+#             language_code="en-US",
+#             name="en-US-Wavenet-D",  # Male voice option (Wavenet-D is a male voice)
+#             ssml_gender=texttospeech.SsmlVoiceGender.MALE
+#         )
+
+#         # Configure the audio output
+#         audio_config = texttospeech.AudioConfig(
+#             audio_encoding=texttospeech.AudioEncoding.MP3
+#         )
+
+#         # Generate the audio
+#         synthesis_input = texttospeech.SynthesisInput(text=text)
+#         response = client.synthesize_speech(
+#             input=synthesis_input, voice=voice, audio_config=audio_config
+#         )
+
+#         # Save the audio to the file
+#         with open(audio_file_path, "wb") as out_file:
+#             out_file.write(response.audio_content)
+#         logger.info(f"Audio saved to: {audio_file_path}")
+#         return audio_file_path
+#     except Exception as e:
+#         logger.error(f"Text-to-speech error: {str(e)}")
+#         raise HTTPException(status_code=500, detail=f"Text-to-speech error: {str(e)}")
 
 # Read resume text from file
 def load_resume_text(file_path: str = "resume.txt") -> str:
