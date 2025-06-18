@@ -326,7 +326,7 @@ def convert_to_wav(input_path: str, output_path: str) -> str:
 def speech_to_text(audio_path: str) -> str:
     logger.info(f"Processing audio file: {audio_path}")
     
-    # List of AssemblyAI API keys
+    # List of AssemblyAI API keys (replace with actual environment variables or values)
     api_keys = [
         ASSEMBLY_AI_APIKEY_1,
         ASSEMBLY_AI_APIKEY_2,
@@ -349,10 +349,10 @@ def speech_to_text(audio_path: str) -> str:
             else:
                 logger.warning(f"AssemblyAI transcription failed with key {i + 1}: Status {transcript.status}")
                 continue
-        except aai.exceptions.AuthenticationError:
+        except aai.AuthenticationError:
             logger.error(f"Authentication failed with AssemblyAI API key {i + 1}")
             continue
-        except aai.exceptions.RequestError as e:
+        except aai.RequestError as e:
             logger.error(f"AssemblyAI request error with key {i + 1}: {str(e)}")
             continue
         except Exception as e:
@@ -376,7 +376,7 @@ def speech_to_text(audio_path: str) -> str:
     except Exception as e:
         logger.error(f"Unexpected error in speech_to_text fallback: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
+    
 def text_to_speech(text: str, audio_file_path: str) -> str:
     logger.info(f"Generating audio for text: {text[:50]}...")
     try:
