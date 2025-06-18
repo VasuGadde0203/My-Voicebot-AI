@@ -252,6 +252,7 @@ from typing import List, Dict
 import logging
 from pydub import AudioSegment
 from pydantic import BaseModel
+import assemblyai as aai
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -263,6 +264,10 @@ load_dotenv()
 AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
 AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION")
+ASSEMBLY_AI_APIKEY_1 = os.getenv("ASSEMBLY_AI_APIKEY_1")
+ASSEMBLY_AI_APIKEY_2 = os.getenv("ASSEMBLY_AI_APIKEY_2")
+ASSEMBLY_AI_APIKEY_3 = os.getenv("ASSEMBLY_AI_APIKEY_3")
+
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -299,23 +304,77 @@ def convert_to_wav(input_path: str, output_path: str) -> str:
         logger.error(f"Audio conversion error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Audio conversion error: {str(e)}")
 
+# def speech_to_text(audio_path: str) -> str:
+#     logger.info(f"Processing audio file: {audio_path}")
+#     recognizer = sr.Recognizer()
+#     try:
+#         with sr.AudioFile(audio_path) as source:
+#             audio_data = recognizer.record(source)
+#             transcript = recognizer.recognize_google(audio_data)
+#             logger.info(f"Transcript: {transcript}")
+#             return transcript
+#     except sr.UnknownValueError:
+#         logger.error("Speech recognition could not understand audio")
+#         raise HTTPException(status_code=400, detail="Could not understand audio")
+#     except sr.RequestError as e:
+#         logger.error(f"Speech recognition error: {str(e)}")
+#         raise HTTPException(status_code=500, detail=f"Speech recognition error: {str(e)}")
+#     except Exception as e:
+#         logger.error(f"Unexpected error in speech_to_text: {str(e)}")
+#         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
 def speech_to_text(audio_path: str) -> str:
     logger.info(f"Processing audio file: {audio_path}")
+    
+    # List of AssemblyAI API keys
+    api_keys = [
+        ASSEMBLY_AI_APIKEY_1,
+        ASSEMBLY_AI_APIKEY_2,
+        ASSEMBLY_AI_APIKEY_3
+    ]
+    
+    # Initialize recognizer for fallback
     recognizer = sr.Recognizer()
+    
+    # Try AssemblyAI with multiple API keys
+    for i, api_key in enumerate(api_keys):
+        try:
+            logger.info(f"Attempting transcription with AssemblyAI API key {i + 1}")
+            aai.settings.api_key = api_key
+            transcriber = aai.Transcriber()
+            transcript = transcriber.transcribe(audio_path)
+            if transcript.status == aai.TranscriptStatus.COMPLETED:
+                logger.info(f"AssemblyAI transcription successful with key {i + 1}: {transcript.text}")
+                return transcript.text
+            else:
+                logger.warning(f"AssemblyAI transcription failed with key {i + 1}: Status {transcript.status}")
+                continue
+        except aai.exceptions.AuthenticationError:
+            logger.error(f"Authentication failed with AssemblyAI API key {i + 1}")
+            continue
+        except aai.exceptions.RequestError as e:
+            logger.error(f"AssemblyAI request error with key {i + 1}: {str(e)}")
+            continue
+        except Exception as e:
+            logger.error(f"Unexpected error with AssemblyAI key {i + 1}: {str(e)}")
+            continue
+    
+    # Fallback to speech_recognition (Google Speech Recognition) if all API keys fail
+    logger.info("Falling back to Google Speech Recognition")
     try:
         with sr.AudioFile(audio_path) as source:
             audio_data = recognizer.record(source)
             transcript = recognizer.recognize_google(audio_data)
-            logger.info(f"Transcript: {transcript}")
+            logger.info(f"Google Speech Recognition transcript: {transcript}")
             return transcript
     except sr.UnknownValueError:
-        logger.error("Speech recognition could not understand audio")
+        logger.error("Google Speech Recognition could not understand audio")
         raise HTTPException(status_code=400, detail="Could not understand audio")
     except sr.RequestError as e:
-        logger.error(f"Speech recognition error: {str(e)}")
+        logger.error(f"Google Speech Recognition error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Speech recognition error: {str(e)}")
     except Exception as e:
-        logger.error(f"Unexpected error in speech_to_text: {str(e)}")
+        logger.error(f"Unexpected error in speech_to_text fallback: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 def text_to_speech(text: str, audio_file_path: str) -> str:
