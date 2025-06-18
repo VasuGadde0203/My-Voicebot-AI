@@ -253,6 +253,7 @@ import logging
 from pydub import AudioSegment
 from pydantic import BaseModel
 import assemblyai as aai
+import pyttsx3
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -390,11 +391,31 @@ def speech_to_text(audio_path: str) -> str:
         logger.error(f"Unexpected error in speech_to_text fallback: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
     
+# def text_to_speech(text: str, audio_file_path: str) -> str:
+#     logger.info(f"Generating audio for text: {text[:50]}...")
+#     try:
+#         tts = gTTS(text=text, lang='en',)
+#         tts.save(audio_file_path)
+#         logger.info(f"Audio saved to: {audio_file_path}")
+#         return audio_file_path
+#     except Exception as e:
+#         logger.error(f"Text-to-speech error: {str(e)}")
+#         raise HTTPException(status_code=500, detail=f"Text-to-speech error: {str(e)}")
+
 def text_to_speech(text: str, audio_file_path: str) -> str:
     logger.info(f"Generating audio for text: {text[:50]}...")
     try:
-        tts = gTTS(text=text, lang='en',)
-        tts.save(audio_file_path)
+        # Initialize pyttsx3 engine
+        engine = pyttsx3.init()
+        
+        # Get available voices and select a male voice
+        voices = engine.getProperty('voices')
+        male_voice = next((voice for voice in voices if 'male' in voice.name.lower() or 'david' in voice.name.lower() or 'mark' in voice.name.lower()), voices[0])
+        engine.setProperty('voice', male_voice.id)
+        
+        # Generate and save the audio
+        engine.save_to_file(text, audio_file_path)
+        engine.runAndWait()
         logger.info(f"Audio saved to: {audio_file_path}")
         return audio_file_path
     except Exception as e:
@@ -421,18 +442,26 @@ RESUME_TEXT = load_resume_text()
 def get_openai_response(messages: List[Dict[str, str]]) -> str:
     logger.info(f"Sending messages to OpenAI: {messages}")
     system_prompt = f"""
-You are a voice bot representing me, answering questions as I would based on my resume. Use the following resume information to provide accurate, personal responses:
+        You are a voice bot representing me, answering questions as I would based on my resume. Use the following resume information to provide accurate, personal responses:
 
-{RESUME_TEXT}
+        {RESUME_TEXT}
 
-Instructions:
-- Answer questions as if you are me, using a conversational, intuitive tone in simple English.
-- Reflect my personality and experiences from the resume.
-- Only respond to questions about my life, skills, experiences, or personal traits (e.g., life story, superpower, growth areas, misconceptions, boundaries).
-- If the question is unrelated or inappropriate, politely say: "I'd prefer to focus on questions about my background and experiences."
-- Keep responses concise, natural, and engaging, as if I'm speaking in an interview.
-- Avoid fabricating details not in the resume; if unsure, give a general response based on the resume context.
-"""
+        Instructions:
+        - Answer questions as if you are me, using a conversational, intuitive tone in simple English.
+        - Reflect my personality and experiences from the resume.
+        - Only respond to questions about my life, skills, experiences, or personal traits (e.g., life story, superpower, growth areas, misconceptions, boundaries).
+        - If the question is unrelated or inappropriate, politely say: "I'd prefer to focus on questions about my background and experiences."
+        - Keep responses concise, natural, and engaging, as if I'm speaking in an interview.
+        - Avoid fabricating details not in the resume; if unsure, give a general response based on the resume context.
+
+        Special Case:
+        - If asked “Tell me about yourself” (or similar variants like “Introduce yourself” or “Walk me through your profile”), respond with a confident, structured introduction covering:
+        - Who I am professionally (education or title)
+        - My key skills and strengths
+        - Projects or achievements that show my capabilities
+        - What I’m currently looking for or excited about next
+        - Keep it to 4–6 lines, casual but clear.
+        """
     system_message = [{"role": "system", "content": system_prompt}]
     try:
         response = client.chat.completions.create(
